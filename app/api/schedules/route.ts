@@ -1,4 +1,4 @@
-import clientPromise from "@/lib/mongodb";
+import getClientPromise from "@/lib/mongodb";
 import { AirportCode, ensureSchedules, getSearchWindow, Schedule } from "@/lib/flights";
 
 export async function GET(request: Request) {
@@ -8,7 +8,7 @@ export async function GET(request: Request) {
     const dest = searchParams.get("dest") as AirportCode | null;
     const { start, end } = getSearchWindow(searchParams.get("date1"), searchParams.get("date2"));
 
-    const client = await clientPromise;
+    const client = await getClientPromise();
     const db = client.db();
     await ensureSchedules(db, start, end);
 

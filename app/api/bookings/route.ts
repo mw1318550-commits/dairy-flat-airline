@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import clientPromise from "@/lib/mongodb";
+import getClientPromise from "@/lib/mongodb";
 import { Booking, ensureSchedules, getSearchWindow, makeBookingReference, Schedule } from "@/lib/flights";
 
 type BookingRequest = {
@@ -19,7 +19,7 @@ export async function GET(request: Request) {
     return Response.json({ error: "Provide an email address or booking reference." }, { status: 400 });
   }
 
-  const client = await clientPromise;
+  const client = await getClientPromise();
   const db = client.db();
   const { start, end } = getSearchWindow();
   await ensureSchedules(db, start, end);
@@ -71,7 +71,7 @@ export async function POST(request: Request) {
     return Response.json({ error: "Passenger name and email are required." }, { status: 400 });
   }
 
-  const client = await clientPromise;
+  const client = await getClientPromise();
   const db = client.db();
   const schedules = db.collection<Schedule>("schedules");
   const _id = new ObjectId(scheduleId);
@@ -135,7 +135,7 @@ export async function DELETE(request: Request) {
     return Response.json({ error: "A booking reference is required." }, { status: 400 });
   }
 
-  const client = await clientPromise;
+  const client = await getClientPromise();
   const db = client.db();
   const result = await db
     .collection<Schedule>("schedules")
