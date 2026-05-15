@@ -54,7 +54,7 @@ const rules: Rule[] = [
     destination: "YSSY",
     weekdays: [5],
     localDeparture: "10:30",
-    durationMinutes: 210,
+    durationMinutes: 230,
     price: 890,
   },
   {
@@ -65,7 +65,7 @@ const rules: Rule[] = [
     destination: "NZNE",
     weekdays: [0],
     localDeparture: "15:30",
-    durationMinutes: 230,
+    durationMinutes: 210,
     price: 890,
   },
   {
@@ -232,7 +232,22 @@ export async function ensureSchedules(db: Db, start: Date, end: Date) {
     docs.map((doc) => ({
       updateOne: {
         filter: { flightKey: doc.flightKey },
-        update: { $setOnInsert: doc },
+        update: {
+          $set: {
+            flightNumber: doc.flightNumber,
+            aircraft: doc.aircraft,
+            capacity: doc.capacity,
+            origin: doc.origin,
+            destination: doc.destination,
+            departureTime: doc.departureTime,
+            arrivalTime: doc.arrivalTime,
+            price: doc.price,
+          },
+          $setOnInsert: {
+            flightKey: doc.flightKey,
+            bookings: [],
+          },
+        },
         upsert: true,
       },
     })),
